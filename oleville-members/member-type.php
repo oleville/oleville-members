@@ -97,6 +97,8 @@ if(!class_exists('Oleville_Members_Type'))
     		} 
     	} // END save_post
 
+
+        //TODO: update for members
         //function to handle AJAX requests for member info
         public function get_member_info()
         {

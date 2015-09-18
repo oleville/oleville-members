@@ -4,7 +4,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 	class Oleville_Members_Shortcode
 	{
 		const POST_TYPE = "member";
-		const SHORTCODE = "memeber";
+		const SHORTCODE = "member";
 
 		private $_meta = array(
 			'position',
@@ -40,20 +40,19 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			//error_log("Adding Short Code");
 
 			// registering external scripts
-			wp_register_script( 'voting-candidate-js', WP_PLUGIN_URL.'/oleville-voting/js/candidate_lightbox.js', array('jquery') );
+			//wp_register_script( 'voting-candidate-js', WP_PLUGIN_URL.'/oleville-voting/js/candidate_lightbox.js', array('jquery') );
 			wp_register_script( 'members-colorbox', WP_PLUGIN_URL.'/oleville-members/js/jquery.colorbox-min.js', array('jquery'));
 		   	wp_localize_script( 'voting-candidate-js', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
 
 			wp_enqueue_script( 'jquery' );
 
-
 			//registering the members colorbox
-			//TODO: recreate this, currently setaling the one from votine
+			//TODO: recreate this, currently stealing the one from voting
 			wp_enqueue_style( 'members-colorbox', WP_PLUGIN_URL.'/oleville-members/css/colorbox.css');
 
 			// Add the shortcode hook
-			if (!shortcode_exists('show-candidates')) {
-				add_shortcode('show-candidates', array(&$this, 'member_handler'));
+			if (!shortcode_exists('show-members')) {
+				add_shortcode('show-members', array(&$this, 'member_handler'));
 			}
 		}
 

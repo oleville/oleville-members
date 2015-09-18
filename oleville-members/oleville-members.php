@@ -4,12 +4,12 @@
     Plugin URI: http://www.oleville.com
     Description: Provides Committee Member functionality
     Version: 1.2
-    Author: John Bruer, Elijah Verdoorn
+    Author:Elijah Verdoorn
 	Author URI: www.oleville.com
     License: GPL2
 */
 /*
-Copyright 2014  John Bruer, Elijah Verdoorn  (email : john@bruerstudios.com, elijahverdoorn@gmail.com)
+Copyright 2014  John Bruer, Elijah Verdoorn  (email : elijahverdoorn@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
