@@ -12,6 +12,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			'contact',
 			'class',
 			'subcommittee',
+			'branch',
 		);
 
 		private $messages = array(
@@ -40,9 +41,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			//error_log("Adding Short Code");
 
 			// registering external scripts
-			//wp_register_script( 'voting-candidate-js', WP_PLUGIN_URL.'/oleville-voting/js/candidate_lightbox.js', array('jquery') );
 			wp_register_script( 'members-colorbox', WP_PLUGIN_URL.'/oleville-members/js/jquery.colorbox-min.js', array('jquery'));
-		   	wp_localize_script( 'voting-candidate-js', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
 
 			wp_enqueue_script( 'jquery' );
 
@@ -65,7 +64,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 		public function show_members() {
 			global $wpdb;
 			$result .= apply_filters( 'the_content', $this->current_election['post_content'] );
-			$result .= '';
 			$result .= '<table class="member-table">';
 
 			$args = array(
@@ -75,9 +73,9 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				'order' => 'ASC', // what code is this?
 				'category' => '' // how to get command-line style args from the shortcode call?
 			);
+
 			// the query
 			$query = new WP_Query($args);
-			//remove_filter('posts_orderby', 'custom_posts_orderby');
 
 			//the loop
 			while ($query -> have_posts())
@@ -85,18 +83,19 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				$query -> the_post();
 				$positionID = get_the_ID();
 				$positionTitle = get_the_title();
+
 				$mem_args = array(
 				'posts_per_page' => -1,
 				'post_type' => 'member',
-				'meta_query' => $can_meta,
-				'orderby' => 'rand',
+				'orderby' => 'title',
 				);
 				$members_query = new WP_Query($mem_args);
 
-				$result .= '<tr><td colspan="12" class="positiontd" ><h2>' . $positionTitle . '</h2></td></tr>';
-
 				$result .= '<tr>';
-				// This works because 1,2,3,4 are all factors of 12
+				// need to set it to display in 4 columns, unlimited number of rows
+				$num_cols = 4;
+				$col_count = 0;
+
 				$colspan = 12/$candidates_query->post_count;
 				while($members_query -> have_posts()) {
 					$members_query -> the_post();
@@ -107,14 +106,20 @@ if(!class_exists('Oleville_Members_Shortcode'))
 						$thumb = '<img src="'.get_template_directory_uri().'/img/placeholder_thumb.png" width="150" height="150">';
 					}
 
-					$result .= '<td colspan="'.$colspan.'" class="candidate"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
+					$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
 
-					$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">'; //should be defined in candidate_profile.php
+					$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
 
 					$result .= '</center></div></td>';
-				}
-				$result .= '</tr>'; //complete the table row
 
+					if ($col_count == 3)//check if we need a new row
+					{
+						$result .= '</tr>';//make a new row
+						$col_count = 0;
+					} else {
+						$col_count++;//keep going on this row
+					}
+				}
 			}
 
 			$result .= '</table>'; // end the table

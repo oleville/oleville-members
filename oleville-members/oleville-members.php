@@ -1,15 +1,15 @@
 <?php
 /*
-	Plugin Name: Oleville Member Support
+	Plugin Name: Oleville Members
     Plugin URI: http://www.oleville.com
-    Description: Provides Committee Member functionality
+    Description: Provides Member functionality
     Version: 1.2
     Author:Elijah Verdoorn
-	Author URI: www.oleville.com
+	Author URI: www.elijahverdoorn.com
     License: GPL2
 */
 /*
-Copyright 2014  John Bruer, Elijah Verdoorn  (email : elijahverdoorn@gmail.com)
+Copyright 2015 Elijah Verdoorn  (email : elijah@elijahverdoorn.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
