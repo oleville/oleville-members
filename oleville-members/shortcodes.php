@@ -41,14 +41,13 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			//error_log("Adding Short Code");
 
 			// registering external scripts
-			wp_register_script( 'members-colorbox', WP_PLUGIN_URL.'/oleville-members/js/jquery.colorbox-min.js', array('jquery'));
-
 			wp_enqueue_script( 'jquery' );
+
+			wp_enqueue_script( 'ov-members-js', plugins_url( '/js/member-lightbox.js', __FILE__ ), array(), '20120206', true );
+
 
 			//registering the members colorbox
 			//TODO: recreate this, currently stealing the one from voting
-			wp_enqueue_style( 'members-colorbox', WP_PLUGIN_URL.'/oleville-members/css/colorbox.css');
-
 			// Add the shortcode hook
 			if (!shortcode_exists('show-members')) {
 				add_shortcode('show-members', array(&$this, 'member_handler'));
@@ -77,6 +76,10 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			// the query
 			$query = new WP_Query($args);
 
+			// need to set it to display in 4 columns, unlimited number of rows
+			$num_cols = 4;
+			$col_count = 0;
+
 			//the loop
 			while ($query -> have_posts())
 			{
@@ -89,36 +92,25 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				'post_type' => 'member',
 				'orderby' => 'title',
 				);
+
 				$members_query = new WP_Query($mem_args);
 
-				$result .= '<tr>';
-				// need to set it to display in 4 columns, unlimited number of rows
-				$num_cols = 4;
-				$col_count = 0;
-
 				$colspan = 12/$candidates_query->post_count;
-				while($members_query -> have_posts()) {
-					$members_query -> the_post();
+				$thumb = get_the_post_thumbnail(get_the_ID(), "thumbnail");
+				if(!$thumb) {
+					$thumb = '<img src="'.get_template_directory_uri().'/img/placeholder_thumb.png" width="150" height="150">';
+				}
 
-					$thumb = get_the_post_thumbnail(get_the_ID(), "thumbnail");
+				$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
+				$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
+				$result .= '</center></div></td>';
 
-					if(!$thumb) {
-						$thumb = '<img src="'.get_template_directory_uri().'/img/placeholder_thumb.png" width="150" height="150">';
-					}
-
-					$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
-
-					$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
-
-					$result .= '</center></div></td>';
-
-					if ($col_count == 3)//check if we need a new row
-					{
-						$result .= '</tr>';//make a new row
-						$col_count = 0;
-					} else {
-						$col_count++;//keep going on this row
-					}
+				if ($col_count >= 3)//check if we need a new row
+				{
+					$result .= '</tr>';//make a new row
+					$col_count = 0;
+				} else {
+					$col_count++;//keep going on this row
 				}
 			}
 

@@ -11,7 +11,7 @@ if(!class_exists('Oleville_Members_Type'))
 			'contact',
 			'class',
 			'subcommittee',
-            'branch',
+            //TODO: add datatypes here for additional members (ask pause, BORSC, others?)
 		);
 		
     	/**
@@ -119,7 +119,7 @@ if(!class_exists('Oleville_Members_Type'))
             }
 
             $return_data = array(
-                'name' => $member->post_title,
+                'name' => $candidate->post_title,
                 'featured_image' => $featured_img,
                 'content' => apply_filters('the_content', $member->post_content),
             );

@@ -76,12 +76,7 @@ public function wpb_load_widget() {
 
 
 public  function check_widget() {
-        wp_enqueue_script('jquery-ui', plugins_url( 'js/jquery-ui-1.10.3.custom.min.js', __FILE__ ), array( 'jquery' ), array(), '1.0.0', true);
-				wp_enqueue_script('jquery-mousewheel', plugins_url( 'js/jquery.mousewheel.min.js', __FILE__ ), array( 'jquery' ), array(), '1.0.0', true);
-				wp_enqueue_script('jquery-kinetic', plugins_url( 'js/jquery.kinetic.min.js', __FILE__ ), array( 'jquery' ), array(), '1.0.0', true);
-				wp_enqueue_script('smoothdivscroll', plugins_url( 'js/jquery.smoothDivScroll-1.3.js', __FILE__ ), array( 'jquery' ), array(), '1.0.1', true);
-				wp_enqueue_script('ovmd-load', plugins_url( 'js/load.js', __FILE__ ), array( 'jquery' ), array(), '1.0.0', true);
-				wp_enqueue_style('ovmd-style', plugins_url('css/smoothDivScroll.css', __FILE__));
+	wp_enqueue_script('ovmd-load', plugins_url( 'js/load.js', __FILE__ ), array( 'jquery' ), array(), '1.0.0', true);
 }
 
 

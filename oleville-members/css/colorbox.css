@@ -50,23 +50,23 @@
 
 
 #cboxContent #member-lightbox h3  {
-	background: #007da6;
-	color: #FFF;
-	padding: 15px 20px;
-	font-family: "RalewayLight";
-	font-size: 30px;
+    background: #007da6;
+    color: #FFF;
+    padding: 15px 20px;
+    font-family: "RalewayLight";
+    font-size: 30px;
 }
 
 #cboxContent #member-lightbox .member-content-wrapper {
-	padding:15px 20px;
-}	
+    padding:15px 20px;
+}   
 
 #cboxContent #member-lightbox .image-wrapper {
-	float: right;
-	border: 1px #DDD solid;
+    float: right;
+    border: 1px #DDD solid;
 }
 
 #cboxContent #member-lightbox .image-wrapper img {
-	padding: 5px;
-	display: block;
+    padding: 5px;
+    display: block;
 }
