@@ -9,9 +9,8 @@ if(!class_exists('Oleville_Members_Type'))
 			'position',
 			'major',
 			'contact',
-			'class',
 			'subcommittee',
-            //TODO: add datatypes here for additional members (ask pause, BORSC, others?)
+            'office-hours'
 		);
 		
     	/**
@@ -36,8 +35,10 @@ if(!class_exists('Oleville_Members_Type'))
             add_action('publish_post', array(&$this, 'publish_post'));
             add_action('update_post', array(&$this, 'update_post'));
 
-            //Ajax requests go here (if needed)
-    	} // END public function init()
+            //handle ajax requests
+            add_action('wp_ajax_get_member_info', array(&$this, 'get_member_info'));
+            add_action('wp_ajax_nopriv_get_member_info', array(&$this, 'get_member_info')); // not sure if we need this one
+    	}
 
     	/**
     	 * Create the post type
@@ -98,19 +99,18 @@ if(!class_exists('Oleville_Members_Type'))
     	} // END save_post
 
 
-        //TODO: update for members
         //function to handle AJAX requests for member info
         public function get_member_info()
         {
 
             $htmlstring = '<div>';
 
-            $cid = $_POST['cid'];
+            $memberID = $_POST['memberID'];
 
-            $member = get_post($cid);
-            $member_metas = get_post_custom($cid);
+            $member = get_post($memberID);
+            $member_metas = get_post_custom($memberID);
 
-            $thumb = get_post_thumbnail_id($cid);
+            $thumb = get_post_thumbnail_id($memberID);
             $featured_img = '';
             if ($thumb != false)
             {
@@ -119,12 +119,16 @@ if(!class_exists('Oleville_Members_Type'))
             }
 
             $return_data = array(
-                'name' => $candidate->post_title,
+                'name' => $member->post_title,
                 'featured_image' => $featured_img,
+                'position' => $member_metas['position'],
+                'major' => $member_metas['major'],
+                'office-hours' => $member_metas['office-hours'],
                 'content' => apply_filters('the_content', $member->post_content),
             );
 
-            //other stuff needed?
+            echo json_encode($return_data); // return the JSON data
+            wp_die(); // clean up
         }
 
 

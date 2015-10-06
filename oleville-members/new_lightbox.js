@@ -1,4 +1,4 @@
-* Superior Web Systems */ 
+/* Superior Web Systems */ 
 function displayHideBox(boxNumber) 
 { 
     if(document.getElementById("LightBox"+boxNumber).style.display=="none") { 

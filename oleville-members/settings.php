@@ -44,7 +44,7 @@ if(!class_exists('Oleville_Members_Settings'))
 					'default' => get_bloginfo( 'name' ),
                 )
             );
-						// add your setting's fields
+			// add your setting's fields
             add_settings_field(
                 'oleville_members-branch_note_title', 
                 'Note Title', 
@@ -55,7 +55,7 @@ if(!class_exists('Oleville_Members_Settings'))
                     'field' => 'branch_note_title',
                 )
             );
-						// add your setting's fields
+			// add your setting's fields
             add_settings_field(
                 'oleville_members-branch_note', 
                 'Note', 

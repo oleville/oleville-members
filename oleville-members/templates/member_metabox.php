@@ -8,11 +8,11 @@
 <br />
 <label for="subcommittee">Subcommittee (Optional):</label>
 <br />
-<input type="text" id="subcommittee" name="subcommittee"  placeholder="Special Events" value="<?php echo get_post_meta($post->ID, 'subcommittee', TRUE) ?>"/>
+<input type="text" id="subcommittee" name="subcommittee"  placeholder="Bylaws" value="<?php echo get_post_meta($post->ID, 'subcommittee', TRUE) ?>"/>
 <br />
 <label for="major">Major (Optional):</label>
 <br />
-<input type="text" id="major" name="major"  placeholder="Physics" value="<?php echo get_post_meta($post->ID, 'major', TRUE) ?>"/>
+<input type="text" id="major" name="major"  placeholder="Math" value="<?php echo get_post_meta($post->ID, 'major', TRUE) ?>"/>
 <br />
 <label for="subcommittee">Contact (Optional):</label>
 <br />
