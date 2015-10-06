@@ -10,9 +10,9 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			'position',
 			'major',
 			'contact',
-			'class',
 			'subcommittee',
 			'branch',
+			'office-hours',
 		);
 
 		private $messages = array(
@@ -40,14 +40,19 @@ if(!class_exists('Oleville_Members_Shortcode'))
 		{
 			//error_log("Adding Short Code");
 
+			global $wpdb;
+
 			// registering external scripts
-			wp_enqueue_script( 'jquery' );
+			wp_register_script( 'member-colorbox', WP_PLUGIN_URL.'/oleville-members/js/jquery.colorbox-min.js', array('jquery') );
+            wp_register_script( 'ov-members-js', WP_PLUGIN_URL.'/oleville-members/js/member-lightbox.js', array('jquery') );
+            wp_localize_script( 'ov-members-js', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' )));
+			
+			wp_enqueue_script( 'ov-members-js');
+			wp_enqueue_script( 'member-colorbox');
 
-			wp_enqueue_script( 'ov-members-js', plugins_url( '/js/member-lightbox.js', __FILE__ ), array(), '20120206', true );
+			wp_enqueue_style( 'member-colorbox', WP_PLUGIN_URL.'/oleville-members/css/colorbox.css');
 
 
-			//registering the members colorbox
-			//TODO: recreate this, currently stealing the one from voting
 			// Add the shortcode hook
 			if (!shortcode_exists('show-members')) {
 				add_shortcode('show-members', array(&$this, 'member_handler'));
@@ -62,7 +67,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 
 		public function show_members() {
 			global $wpdb;
-			$result .= apply_filters( 'the_content', $this->current_election['post_content'] );
+			
 			$result .= '<table class="member-table">';
 
 			$args = array(
@@ -70,7 +75,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				'posts_per_page' => -1,
 				'orderby' => 'menu_order',
 				'order' => 'ASC', // what code is this?
-				'category' => '' // how to get command-line style args from the shortcode call?
 			);
 
 			// the query
@@ -84,18 +88,10 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			while ($query -> have_posts())
 			{
 				$query -> the_post();
+
 				$positionID = get_the_ID();
 				$positionTitle = get_the_title();
 
-				$mem_args = array(
-				'posts_per_page' => -1,
-				'post_type' => 'member',
-				'orderby' => 'title',
-				);
-
-				$members_query = new WP_Query($mem_args);
-
-				$colspan = 12/$candidates_query->post_count;
 				$thumb = get_the_post_thumbnail(get_the_ID(), "thumbnail");
 				if(!$thumb) {
 					$thumb = '<img src="'.get_template_directory_uri().'/img/placeholder_thumb.png" width="150" height="150">';
@@ -112,11 +108,11 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				} else {
 					$col_count++;//keep going on this row
 				}
+
 			}
 
 			$result .= '</table>'; // end the table
-
-			$result .= '<div style="display:none;"><div id="member-lightbox"><h3 class="member-name">Member Name</h3><div class="member-content-wrapper"><div class="image-wrapper"><img class="member-picture" src="" /></div><div class="member-content">Placeholder</div></div></div>';
+            $result .= '<div style="display:none;"><div id="member-lightbox"><h3 class="member-name">Member Name</h3><div class="member-content-wrapper"><div class="image-wrapper"><img class="member-picture" src="" /></div><h2 class="member-position">Position</h2><h4 class="member-major">Major</h4><div class="member-content">Placeholder</div></div></div>'; // uses some of the CSS from members (I hope...)
 
 			return $result; // finish the page
 		}
