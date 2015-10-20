@@ -1,0 +1,58 @@
+.ui-datepicker {
+	border: 1px solid rgb(221, 221, 221);
+	border-top: 0 none;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 2px inset;
+	box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 2px inset;	
+	background: #FFF;
+	padding:5px;
+	width:148px;
+}
+
+.ui-datepicker-prev {
+	float:left;	
+}
+
+.ui-datepicker-next {
+	float:right;
+}
+
+.ui-datepicker-title {
+	clear:both;	
+	text-align:center;
+	background:#F6B428;
+	color:#FFF;
+	padding:2px 10px;
+	display:block;
+}
+
+.ui-datepicker td {
+	text-align:center;	
+}
+
+.ui-datepicker a {
+	text-decoration:none;	
+}
+
+.ui-timepicker-wrapper {
+	max-height:250px;
+	overflow-y:scroll;
+	width:158px;
+	border: 1px solid rgb(221, 221, 221);
+	border-top: 0 none;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 2px inset;
+	box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 2px inset;	
+	background: #FFF;
+}
+
+.ui-timepicker-wrapper ul {
+	margin-top:5px;	
+}
+
+.ui-timepicker-wrapper li {
+	text-align:center;
+}
+
+#repeat_container {
+	margin-top:1em;	
+	padding-left: 2px;
+}

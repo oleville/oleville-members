@@ -10,7 +10,9 @@ if(!class_exists('Oleville_Members_Type'))
 			'major',
 			'contact',
 			'subcommittee',
-            'office-hours'
+            'start_time',
+            'end_time',
+            'day_of_week'
 		);
 		
     	/**
@@ -91,11 +93,26 @@ if(!class_exists('Oleville_Members_Type'))
     				// Update the post's meta field
     				update_post_meta($post_id, $field_name, $_POST[$field_name]);
     			}
-    		}
-    		else
-    		{
+    		} else {
     			return;
-    		} 
+    		}
+
+
+            $max_repeats = (integer)$_POST['max_repeats'];
+            //repeat loop
+            $repeat_list = array();
+            for ($i = 0; $i <= $max_repeats; $i++)
+            {
+                if(isset($_POST['st'.$i], $_POST['et'.$i], $_POST['dow'.i]) && $_POST['st'.i] != '' && $_POST['et'.i] != '' && $_POST['dow'.i] != '')
+                {
+                    array_push($repeat_list, array(
+                        $_POST['st'.$i],
+                        $_POST['et'.$i],
+                        $_POST['dow'.$i]
+                    ));
+                }
+            }
+            update_post_meta($post_id, 'repeat', serialize($repeat_list));
     	} // END save_post
 
 
@@ -123,7 +140,9 @@ if(!class_exists('Oleville_Members_Type'))
                 'featured_image' => $featured_img,
                 'position' => $member_metas['position'],
                 'major' => $member_metas['major'],
-                'office-hours' => $member_metas['office-hours'],
+                'start_time' => $member_metas['start_time'],
+                'end_time' => $member_metas['end_time'],
+                'day_of_week' => $member_metas['day_of_week'],
                 'content' => apply_filters('the_content', $member->post_content),
             );
 
@@ -145,6 +164,9 @@ if(!class_exists('Oleville_Members_Type'))
     	{			
     		// Add metaboxes
     		add_action('add_meta_boxes', array(&$this, 'add_meta_boxes'));
+            // enqueue scripts
+            add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+
     	} // END public function admin_init()
 			
     	/**
@@ -172,6 +194,47 @@ if(!class_exists('Oleville_Members_Type'))
 			// Render the job order metabox
 			include(sprintf("%s/templates/member_metabox.php", dirname(__FILE__)));			
 		}
+
+        /**
+         * Function hooked to WP's admin_enqueue_scripts action
+         */
+        public function admin_enqueue_scripts($hook)
+        {
+            global $post;
+            // Check to see that these scripts are only loaded for post-new.php
+            // and the type is eventmail
+            if('post-new.php' != $hook && 'post.php' != $hook)
+                return;
+            if($_GET['post_type'] != self::POST_TYPE && 'post.php' != $hook)
+                return;
+
+            // Register the JS and CSS files with WordPress
+            wp_register_style(
+                'oleville-members-member-css',
+                plugins_url('templates/css/member_metabox.css', __FILE__)
+            );
+            wp_register_script(
+                'oleville-members-member-js',
+                plugins_url('templates/js/member_metabox.js', __FILE__),
+                array('jquery', 'jquery-ui-datepicker')
+            );
+            wp_register_script(
+                'oleville-members-timepicker-js',
+                plugins_url('templates/js/jquery.timepicker.min.js', __FILE__),
+                array('jquery')
+            );
+
+            wp_localize_script(
+                'oleville_members_member-js',
+                'repeat',
+                array('members' => json_encode(unserialize(get_post_meta($post->ID, 'repeat', TRUE))))
+            );
+
+            // Enqueue the styles and scripts
+            wp_enqueue_style('oleville-members-member-css');
+            wp_enqueue_script('oleville-members-member-js');
+            wp_enqueue_script('oleville-members-timepicker-js');
+        }
 
 	} // END class Post_Type_Template
 } // END if(!class_exists('Post_Type_Template'))
