@@ -9,6 +9,7 @@ if(!class_exists('Oleville_Members_Type'))
 			'position',
 			'major',
 			'contact',
+            'class',
 			'subcommittee',
             'start_time',
             'end_time',
@@ -91,7 +92,10 @@ if(!class_exists('Oleville_Members_Type'))
     			foreach($this->_meta as $field_name)
     			{
     				// Update the post's meta field
-    				update_post_meta($post_id, $field_name, $_POST[$field_name]);
+                    if(isset( $_POST[$field_name]))
+                    {
+                        update_post_meta($post_id, $field_name, sanitize_text_field($_POST[$field_name]));                    
+                    }
     			}
     		} else {
     			return;
@@ -112,6 +116,7 @@ if(!class_exists('Oleville_Members_Type'))
                     ));
                 }
             }
+            write_log(serialize($repeat_list));
             update_post_meta($post_id, 'repeat', serialize($repeat_list));
     	} // END save_post
 
@@ -140,6 +145,7 @@ if(!class_exists('Oleville_Members_Type'))
                 'featured_image' => $featured_img,
                 'position' => $member_metas['position'],
                 'major' => $member_metas['major'],
+                'class' => $member_metas['class'],
                 'start_time' => $member_metas['start_time'],
                 'end_time' => $member_metas['end_time'],
                 'day_of_week' => $member_metas['day_of_week'],
