@@ -11,6 +11,7 @@ if(!class_exists('Oleville_Members_Type'))
 			'contact',
             'class',
 			'subcommittee',
+            'repeat',
             'start_time',
             'end_time',
             'day_of_week'
@@ -107,7 +108,7 @@ if(!class_exists('Oleville_Members_Type'))
             $repeat_list = array();
             for ($i = 0; $i <= $max_repeats; $i++)
             {
-                if(isset($_POST['st'.$i], $_POST['et'.$i], $_POST['dow'.i]) && $_POST['st'.i] != '' && $_POST['et'.i] != '' && $_POST['dow'.i] != '')
+                if(isset($_POST['st'.$i], $_POST['et'.$i], $_POST['dow'.$i]) && $_POST['st'.$i] != '' && $_POST['et'.$i] != '' && $_POST['dow'.$i] != '')
                 {
                     array_push($repeat_list, array(
                         $_POST['st'.$i],
@@ -116,8 +117,7 @@ if(!class_exists('Oleville_Members_Type'))
                     ));
                 }
             }
-            write_log(serialize($repeat_list));
-            update_post_meta($post_id, 'repeat', serialize($repeat_list));
+            update_post_meta($post_id, 'repeat_list', serialize($repeat_list));
     	} // END save_post
 
 
@@ -231,10 +231,11 @@ if(!class_exists('Oleville_Members_Type'))
             );
 
             wp_localize_script(
-                'oleville_members_member-js',
-                'repeat',
-                array('members' => json_encode(unserialize(get_post_meta($post->ID, 'repeat', TRUE))))
+                'oleville-members-member-js',
+                'repeat_member',
+                array('members' => json_encode(unserialize(get_post_meta($post->ID, 'repeat_list', TRUE))))
             );
+
 
             // Enqueue the styles and scripts
             wp_enqueue_style('oleville-members-member-css');

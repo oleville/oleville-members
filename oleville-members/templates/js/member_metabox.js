@@ -37,8 +37,9 @@ jQuery(document).ready(function($) {
 
     // Load in the repeated times for the office hours from the member, located in repeat.events
 
-    var repeat_events = JSON.parse(repeat.events);
-    // console.log(repeat_events);
+    var repeat_events = JSON.parse(repeat_member.members);
+    console.log("hello");
+    console.log(repeat);
 
     if(repeat_events.length > 0) {
 
