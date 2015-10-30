@@ -118,6 +118,7 @@ if(!class_exists('Oleville_Members_Type'))
                 }
             }
             update_post_meta($post_id, 'repeat_list', serialize($repeat_list));
+
     	} // END save_post
 
 

@@ -145,16 +145,60 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			// need to set it to display in 4 columns, unlimited number of rows
 			$num_cols = 2;
 			$col_count = 0;
+			echo "Today's date: ";
+			$currentDay = strtolower(current_time('l'));
+			$currentTimeHr = current_time('G') + 1; //1 offset for timezone stuff (TODO: check this related to daylight savings time in future)
+			$currentTimeMin = current_time('i');
 
 			//the loop
 			while ($query -> have_posts())
 			{
 				$query -> the_post();
 
-				$positionID = get_the_ID();
-				$positionTitle = get_the_title();
+				$memberID = get_the_ID();
+				$memberTitle = get_the_title();
 
-				$result .= '<div class = "office-hours-front"><h1 class="member-name">' . get_the_title() . '</h1><h2 class="position-name">' . get_post_meta($positionID,'position') . '</div>';
+				// let's get the data into a more managable structure. Also, let's do military time, cause that's fun, right?
+
+				$day = get_post_meta($memberID, 'day_of_week', TRUE);
+				$startTime = get_post_meta($memberID, 'start_time', TRUE);
+				$endTime = get_post_meta($memberID, 'end_time', TRUE);
+
+				if (strlen($startTime) == 7)
+				{
+					$startTimeHr = substr($startTime, 0, 2);
+					$startTimeMin = substr($startTime, 3, 2);
+				} else {
+					$startTimeHr = substr($startTime, 0, 1);
+					$startTimeMin = substr($startTime, 2, 2);
+				}
+				if (strpos($startTime, 'pm')) {
+					$startTimeHr += 12; 
+				}
+
+				if (strlen($endTime) == 7)
+				{
+					$endTimeHr = substr($endTime, 0, 2);
+					$endTimeMin = substr($endTime, 3, 2);
+				} else {
+					$endTimeHr = substr($endTime, 0, 1);
+					$endTimeMin = substr($endTime, 2, 2);
+				}
+				if (strpos($endTime, 'pm')) {
+					$endTimeHr += 12; 
+				}
+
+				if (($currentDay == $day)) {
+					if (($currentTimeHr >= $startTimeHr) && ($currentTimeHr <= $endTimeHr)) {
+						if ((($currentTimeMin >= $startTimeMin) && ($currentTimeMin <= $endTimeMin)) || ($currentTimeHr != $startTimeHr) || ($currentTimeMin != $endTimeHr)) {
+							write_log($memberTitle);
+						}
+					}
+				}
+
+				$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
+				$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
+				$result .= '</center></div></td>';
 
 				if ($col_count >= 3)//check if we need a new row
 				{
