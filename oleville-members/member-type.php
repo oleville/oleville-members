@@ -102,7 +102,6 @@ if(!class_exists('Oleville_Members_Type'))
     			return;
     		}
 
-
             $max_repeats = (integer)$_POST['max_repeats'];
             //repeat loop
             $repeat_list = array();
@@ -118,6 +117,7 @@ if(!class_exists('Oleville_Members_Type'))
                 }
             }
             update_post_meta($post_id, 'repeat_list', serialize($repeat_list));
+            write_log(serialize(($repeat_list)));
 
     	} // END save_post
 
@@ -157,6 +157,10 @@ if(!class_exists('Oleville_Members_Type'))
             wp_die(); // clean up
         }
 
+        public function get_repeat_office_hours($post_id)
+        {
+            return serialize($repeat_list);
+        }
 
         // not needed
         public function delete_post($post_id)

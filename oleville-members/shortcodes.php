@@ -145,8 +145,8 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			// need to set it to display in 4 columns, unlimited number of rows
 			$num_cols = 2;
 			$col_count = 0;
-			echo "Today's date: ";
-			$currentDay = strtolower(current_time('l'));
+
+			$currentDay = strtolower(current_time('l')); // the day of the week, no caps so that we can compare it to how we save the data in the member metadata
 			$currentTimeHr = current_time('G') + 1; //1 offset for timezone stuff (TODO: check this related to daylight savings time in future)
 			$currentTimeMin = current_time('i');
 
@@ -159,11 +159,12 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				$memberTitle = get_the_title();
 
 				// let's get the data into a more managable structure. Also, let's do military time, cause that's fun, right?
-
 				$day = get_post_meta($memberID, 'day_of_week', TRUE);
 				$startTime = get_post_meta($memberID, 'start_time', TRUE);
 				$endTime = get_post_meta($memberID, 'end_time', TRUE);
+				$doneAlready = FALSE;
 
+				// put the times into a more usable structure. Military time, the hours and mins seperated so that we can compare them individually
 				if (strlen($startTime) == 7)
 				{
 					$startTimeHr = substr($startTime, 0, 2);
@@ -175,7 +176,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				if (strpos($startTime, 'pm')) {
 					$startTimeHr += 12; 
 				}
-
 				if (strlen($endTime) == 7)
 				{
 					$endTimeHr = substr($endTime, 0, 2);
@@ -188,17 +188,103 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					$endTimeHr += 12; 
 				}
 
-				if (($currentDay == $day)) {
-					if (($currentTimeHr >= $startTimeHr) && ($currentTimeHr <= $endTimeHr)) {
-						if ((($currentTimeMin >= $startTimeMin) && ($currentTimeMin <= $endTimeMin)) || ($currentTimeHr != $startTimeHr) || ($currentTimeMin != $endTimeHr)) {
-							write_log($memberTitle);
+				if (($currentDay == $day)) { //if member has office hours today
+					if (($currentTimeHr >= $startTimeHr) && ($currentTimeHr <= $endTimeHr)) { // and we are between the start and ending hours
+						if ((($currentTimeMin >= $startTimeMin) && ($currentTimeMin <= $endTimeMin)) || ($currentTimeHr != $startTimeHr) || ($currentTimeMin != $endTimeHr)) { // and (if we are on either the starting or ending hour) we are between the starting and ending min
+							//the member is in the office. Display them...
+							if (!$doneAlready) { // but only if we haven't done so already
+								$doneAlready = TRUE; // and now we have, so let's make sure that we don't do it again.
+
+
+								//TODO: WRITE THE MEMBER DISPLAY STUFF HERE
+								write_log("oleville-members " . $memberTitle);
+
+
+
+
+							}
 						}
 					}
 				}
 
-				$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
-				$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
-				$result .= '</center></div></td>';
+				if(!$doneAlready) // if we already displayed it, then don't do it again!!!
+				{
+					$repeat_list = serialize(get_post_meta($memberID, 'repeat_list', TRUE));
+					if (strlen($repeat_list) != 6) { // there are multiple office hours, so let's deal with that
+						$i = strpos($repeat_list, "\"");
+						$repeat_list = substr_replace($repeat_list, "", 0, $i); // get rid of the first part, only do this once
+
+						$num_extra = substr($repeat_list, 3, 1); // this is the number of extra office hours
+
+						for ($j = 0; ($j != $num_extra) && (!$doneAlready); $j++)
+						{ 
+							$i = strpos($repeat_list, "\"", 1); // 1 offset for the first character being the "
+							$repeat_list = substr_replace($repeat_list, "", 0, $i); // start
+							$a = strpos($repeat_list, "\"", 1);
+							$startTime = substr($repeat_list, 1, $a - 1);
+							write_log($startTime);
+							$repeat_list = substr_replace($repeat_list, "", 0, $a);
+
+
+							$i = strpos($repeat_list, "\"", 1);
+							$repeat_list = substr_replace($repeat_list, "", 0, $i); // end
+							$a = strpos($repeat_list, "\"", 1);
+							$endTime = substr($repeat_list, 1, $a - 1);
+							write_log($endTime);
+							$repeat_list = substr_replace($repeat_list, "", 0, $a);
+
+							$i = strpos($repeat_list, "\"", 1);
+							$repeat_list = substr_replace($repeat_list, "", 0, $i); // day
+							$a = strpos($repeat_list, "\"", 1);
+							$day = substr($repeat_list, 1, $a - 1);
+							write_log($day);
+							$repeat_list = substr_replace($repeat_list, "", 0, $a);
+
+							// put the times into a more usable structure. Military time, the hours and mins seperated so that we can compare them individually
+							if (strlen($startTime) == 7)
+							{
+								$startTimeHr = substr($startTime, 0, 2);
+								$startTimeMin = substr($startTime, 3, 2);
+							} else {
+								$startTimeHr = substr($startTime, 0, 1);
+								$startTimeMin = substr($startTime, 2, 2);
+							}
+							if (strpos($startTime, 'pm')) {
+								$startTimeHr += 12; 
+							}
+							if (strlen($endTime) == 7)
+							{
+								$endTimeHr = substr($endTime, 0, 2);
+								$endTimeMin = substr($endTime, 3, 2);
+							} else {
+								$endTimeHr = substr($endTime, 0, 1);
+								$endTimeMin = substr($endTime, 2, 2);
+							}
+							if (strpos($endTime, 'pm')) {
+								$endTimeHr += 12; 
+							}
+
+							if (($currentDay == $day)) { //if member has office hours today
+								if (($currentTimeHr >= $startTimeHr) && ($currentTimeHr <= $endTimeHr)) { // and we are between the start and ending hours
+									if ((($currentTimeMin >= $startTimeMin) && ($currentTimeMin <= $endTimeMin)) || ($currentTimeHr != $startTimeHr) || ($currentTimeMin != $endTimeHr)) { // and (if we are on either the starting or ending hour) we are between the starting and ending min
+										//the member is in the office. Display them...
+										if (!$doneAlready) { // but only if we haven't done so already
+											$doneAlready = TRUE; // and now we have, so let's make sure that we don't do it again.
+
+
+											//TODO: WRITE THE MEMBER DISPLAY STUFF HERE
+											write_log("oleville-members " . $memberTitle);
+
+
+
+
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 
 				if ($col_count >= 3)//check if we need a new row
 				{
