@@ -16,6 +16,7 @@ $(document).ready(function() {
 			$('.member-position').html(mem.position);
 			$('.member-major').html(mem.major);
 			$('.member-picture').attr('src', mem.featured_image);
+			$('.member-hometown').html(mem.hometown);
 			$('.member-content').html(mem.content);
 
 			$.colorbox({href:"#member-lightbox", inline:true, width:"40%", speed:"850", opacity:".5"});       

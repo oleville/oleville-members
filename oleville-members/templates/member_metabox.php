@@ -18,6 +18,10 @@
 <br />
 <input type="text" id="contact" name="contact"  placeholder="olethelion@stolaf.edu" value="<?php echo get_post_meta($post->ID, 'contact', TRUE) ?>"/>
 <br />
+<label for="hometown">Hometown</label>
+<br />
+<input type="text" id="hometown" name="hometown"  placeholder="Northfield, MN" value="<?php echo get_post_meta($post->ID, 'hometown', TRUE) ?>"/>
+<br />
 <label for="datetime">Got office hours?</label>
 <div id="datetime">
     <input type="text" class="time" id="start_time" name="start_time" placeholder="7:00pm" value="<?php echo get_post_meta($post->ID, 'start_time', TRUE) ?>"/>

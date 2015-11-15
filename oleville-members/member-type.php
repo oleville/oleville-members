@@ -11,6 +11,7 @@ if(!class_exists('Oleville_Members_Type'))
 			'contact',
             'class',
 			'subcommittee',
+            'hometown',
             'repeat',
             'start_time',
             'end_time',
@@ -102,7 +103,6 @@ if(!class_exists('Oleville_Members_Type'))
     			return;
     		}
 
-
             $max_repeats = (integer)$_POST['max_repeats'];
             //repeat loop
             $repeat_list = array();
@@ -118,6 +118,7 @@ if(!class_exists('Oleville_Members_Type'))
                 }
             }
             update_post_meta($post_id, 'repeat_list', serialize($repeat_list));
+            write_log(serialize(($repeat_list)));
 
     	} // END save_post
 
@@ -147,6 +148,7 @@ if(!class_exists('Oleville_Members_Type'))
                 'position' => $member_metas['position'],
                 'major' => $member_metas['major'],
                 'class' => $member_metas['class'],
+                'hometown' => $member_metas['hometown'],
                 'start_time' => $member_metas['start_time'],
                 'end_time' => $member_metas['end_time'],
                 'day_of_week' => $member_metas['day_of_week'],
@@ -157,6 +159,10 @@ if(!class_exists('Oleville_Members_Type'))
             wp_die(); // clean up
         }
 
+        public function get_repeat_office_hours($post_id)
+        {
+            return serialize($repeat_list);
+        }
 
         // not needed
         public function delete_post($post_id)
