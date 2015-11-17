@@ -140,7 +140,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 		}
 
 		public function show_office_hours()
-		{
+		{	
 			global $wpdb;
 			
 			$result .= '<table class="office-table">';
@@ -177,6 +177,12 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					$thumb = '<img src="'.get_template_directory_uri().'/img/placeholder_thumb.png" width="150" height="150">';
 				}
 
+				$m = array();
+				$t = array();
+				$w = array();
+				$th = array();
+				$f = array();
+
 				// let's get the data into a more managable structure. Also, let's do military time, cause that's fun, right?
 				$day = get_post_meta($memberID, 'day_of_week', TRUE);
 				$startTime = get_post_meta($memberID, 'start_time', TRUE);
@@ -206,14 +212,55 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					$endTimeHr += 12; 
 				}
 
+				if(strtolower($day) == 'thursday')
+				{
+					$letter_day = 'Th';
+				} else {
+					$letter_day = strtoupper(substr($day, 0, 1));
+				}
+
 				if (($currentDay == $day)) { //if member has office hours today
 					if (($currentTimeHr >= $startTimeHr) && ($currentTimeHr <= $endTimeHr)) { // and we are between the start and ending hours
 						if ((($currentTimeMin >= $startTimeMin) && ($currentTimeMin <= $endTimeMin)) || ($currentTimeHr != $startTimeHr) || ($currentTimeMin != $endTimeHr)) { // and (if we are on either the starting or ending hour) we are between the starting and ending min
 							//the member is in the office. Display them...
-								$in_the_office = TRUE;						}
+								$in_the_office = TRUE;
+						}
 					}
 				}
 
+				if ($startTimeHr > 12) {
+					$startTimeHr = ($startTimeHr - 12);
+					$startTimeMin .= 'pm';
+				} else {
+					$startTimeMin .= 'am';
+				}
+				if ($endTimeHr > 12) {
+					$endTimeHr = ($endTimeHr - 12);
+					$endTimeMin .= 'pm';
+				} else {
+					$endTimeMin .= 'am';
+				}
+
+				$to_push = $startTimeHr . ':' . $startTimeMin . ' - ' . $endTimeHr . ':' . $endTimeMin . '<br>';
+				switch (strtolower($letter_day)) {
+					case 'm':
+						array_push($m, $to_push);
+						break;
+					case 't':
+						array_push($t, $to_push);
+						break;
+					case 'w':
+						array_push($w, $to_push);
+						break;
+					case 'th':
+						array_push($th, $to_push);
+						break;
+					case 'f':
+						array_push($f, $to_push);
+						break;
+					default:
+						break;
+				}
 
 				$repeat_list = serialize(get_post_meta($memberID, 'repeat_list', TRUE));
 				if (strlen($repeat_list) != 6) 
@@ -231,7 +278,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 						$startTime = substr($repeat_list, 1, $a - 1);
 						write_log($startTime);
 						$repeat_list = substr_replace($repeat_list, "", 0, $a);
-
 
 						$i = strpos($repeat_list, "\"", 1);
 						$repeat_list = substr_replace($repeat_list, "", 0, $i); // end
@@ -287,11 +333,44 @@ if(!class_exists('Oleville_Members_Shortcode'))
 								}
 							}
 						}
+
+						if ($startTimeHr > 12) {
+							$startTimeHr = ($startTimeHr - 12);
+							$startTimeMin .= 'pm';
+						} else {
+							$startTimeMin .= 'am';
+						}
+						if ($endTimeHr > 12) {
+							$endTimeHr = ($endTimeHr - 12);
+							$endTimeMin .= 'pm';
+						} else {
+							$endTimeMin .= 'am';
+						}
+
+						$to_push = $startTimeHr . ':' . $startTimeMin . ' - ' . $endTimeHr . ':' . $endTimeMin . '<br>';
+						switch (strtolower($letter_day)) {
+							case 'm':
+								array_push($m, $to_push);
+								break;
+							case 't':
+								array_push($t, $to_push);
+								break;
+							case 'w':
+								array_push($w, $to_push);
+								break;
+							case 'th':
+								array_push($th, $to_push);
+								break;
+							case 'f':
+								array_push($f, $to_push);
+								break;
+							default:
+								break;
+						}
 					}
 				}
 
 				//if statement checking if they are in/out of office and then changing the color of in/out
-				$letter_day = strtoupper(substr($day, 0, 1));
 				if ($in_the_office){
 					$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class = "member" style = "color:green;"><strong>IN</strong></div><div class="member_name"><h3>' . get_the_title() . '</h3></div><div class="member-position"><h3>' . $individual_position . '</h3></div>'; // in (color)
 				} else {
