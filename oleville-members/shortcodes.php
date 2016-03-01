@@ -383,7 +383,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					}
 					$result .= '</div>';
 				}
-
 				if (!empty($t))
 				{
 					$result .= '<center><div class="member">' . 'T' . ' ';
@@ -410,7 +409,24 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					}
 					$result .= '</div>';
 				}
+				if (!empty($f))
+				{
+					$result .= '<center><div class="member">' . 'F' . ' ';
+					foreach ($f as $value) {
+						$result .= $value;
+					}
+					$result .= '</div>';
+				}
 
+<<<<<<< HEAD
+				if ($col_count >= $num_cols)//check if we need a new row
+				{
+					$result .= '</tr><tr>';//make a new row
+					$col_count = 0;
+				} else {
+					$col_count++;//keep going on this row
+				}
+			}
 				if (!empty($f))
 				{
 					$result .= '<center><div class="member">' . 'F' . ' ';
@@ -430,10 +446,8 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			}
 
 
-
 			$result .= '</table>'; // end the table
             $result .= '<div style="display:none;"><div id="member"><h3 class="member-name">Member Name</h3><div class="member-content-wrapper"><div class="image-wrapper"><img class="member-picture" src="" /></div><h2 class="member-position">Position</h2><h4 class="member-major">Major</h4><div class="member-content">Placeholder</div></div></div>'; // uses some of the CSS from members (I hope...)
-
 			return $result; // finish the page
 		}
 
