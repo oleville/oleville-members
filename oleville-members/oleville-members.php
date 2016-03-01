@@ -3,7 +3,7 @@
 	Plugin Name: Oleville Members
     Plugin URI: http://www.oleville.com
     Description: Provides Member functionality
-    Version: 1.0
+    Version: 1.1
     Author:Elijah Verdoorn
 	Author URI: www.elijahverdoorn.com
     License: GPL2

@@ -11,11 +11,12 @@ $(document).ready(function() {
 		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
 		$.post(myAjax.ajaxurl, data, function(response) {
 			//alert('Got this from the server: ' + response);
-			mem = jQuery.parseJSON( response );
+			mem = jQuery.parseJSON(response);
 			$('.member-name').html(mem.name);
 			$('.member-position').html(mem.position);
 			$('.member-major').html(mem.major);
 			$('.member-picture').attr('src', mem.featured_image);
+			$('.member-hometown').html(mem.hometown);
 			$('.member-content').html(mem.content);
 
 			$.colorbox({href:"#member-lightbox", inline:true, width:"40%", speed:"850", opacity:".5"});       
