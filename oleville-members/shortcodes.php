@@ -79,6 +79,7 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			return $this->show_front_page();
 		}
 
+		//TODO: decide if this needs to be refactored
 		public function show_members()
 		{
 				global $wpdb; // get a reference to the database
@@ -139,16 +140,44 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			return $result; // finish the page
 		}
 
+		// returns true if the member is in according to the arduino's data
 		public function check_arduino($member)
 		{
 			//call the RESTful API to check if the member is in
 			
 		}
 
-		//this will return a structure of all the members that are currently in the office, and some of the associated metadata
+		public function getDayOfWeek()
+		{
+			return strtolower(date("l")); // get the day of week as a lowercase string (to match the data that we're pulling from the JSON)
+		}
+
+		// this will return true if the member is in the office, and false otherwise
 		public function is_member_in($member)
 		{
-		
+			if(check_arduino($member))
+			{
+				return true;
+			}
+
+			//TODO: check this code. Is is getting the right part into $m? Is it iterating the right number times over each sub-array of $m?
+			foreach ($member['officeHours'] as $m)
+			{
+				if (strcasecmp($m[2], getDayOfWeek()) == 0) // if the strings are the same
+				{
+					// ASSERT: the member has OH on the current day of the week
+					$startTime = date("H:i", strtotime($m[0])); // convert the start time to 24 hour
+					$endTime = date("H:i", strtotime($m[1])); // and the end time
+					$currentTime = date("H");
+					if ($startTime > $currentTime && $currentTime < $endTime) 
+					{
+						// ASSERT: The member is in.
+						return true;
+					}
+				}
+			}
+			//ASSERT: the member is not in. The call to checkArduino returned false, and the time does not match.
+			return false;
 		}
 
 		//this will return a structure if all members that are in the database, and their associated metadata
@@ -165,20 +194,23 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			);
 			$query = new WP_Query($args); // make the query
 
-			$formattedMemberData = new array();
+			$formattedMemberData = new array(); // an array that will hold references to all the members in the database
 
 			//add them to the custom data structure, built out of nested arrays (kinda like a JSON structure, which is convenient because that's how the OH are stored)
 			while ($query -> have_posts())
 			{
 				$thisMember = array(
-					'name' => get_the_title(),
-					'id' => get_the_ID(),
-					'picture'  => get_the_post_thumbnail()
+					'name' => get_the_title(), // the member's name
+					'id' => get_the_ID(), // the member's ID
+					'picture'  => get_the_post_thumbnail() // the member's picture
 					);
-				array_push($thisMember, processOfficeHours(serialize(get_post_meta(get_the_ID(), 'repeat_list', TRUE))));
 
-				array_push($formattedMemberData, $thisMember);
+				$thisMember['officeHours'] = processOfficeHours(get_post_meta(get_the_ID(), 'repeat_list', TRUE)); // add the member's OH to the array
+
+				array_push($formattedMemberData, $thisMember); // add this member's array to the array of all members
 			}
+
+			return $formattedMemberData; // return the array of all members
 		}
 
 		//display the OH page
@@ -190,8 +222,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				if (is_member_in($member))
 				{
 					//add the member to the result string
-				} else {
-
 				}
 			}
 			//here we should build the page that holds all the OH and displays them to the user
@@ -213,8 +243,8 @@ if(!class_exists('Oleville_Members_Shortcode'))
 
 		public function processOfficeHours($officeHours)
 		{
-			$decoded = json_decode($officeHours); // decode the JSON object that holds all the OH
-			//write_log($decoded);
+			$decoded = unserialize($officeHours); // decode the JSON object that holds all the OH. This is convoluted, but does the job.
+
 		}
 
 		/**
