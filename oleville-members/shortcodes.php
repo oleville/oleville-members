@@ -142,10 +142,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 		//this will return a structure of all the members that are currently in the office, and some of the associated metadata
 		public function is_member_in($member)
 		{
-			$officeHours = serialize(get_post_meta($member->get_the_ID(), 'repeat_list', TRUE));
-			//write_log($officeHours);
-
-			$json = json_decode($officeHours);
 		
 		}
 
@@ -163,10 +159,19 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			);
 			$query = new WP_Query($args); // make the query
 
-			//add them to the custom data structure
+			$formattedMemberData = new array();
+
+			//add them to the custom data structure, built out of nested arrays (kinda like a JSON structure, which is convenient because that's how the OH are stored)
 			while ($query -> have_posts())
 			{
-				
+				$thisMember = array(
+					'name' => get_the_title(),
+					'id' => get_the_ID(),
+					'picture'  => get_the_post_thumbnail()
+					);
+				array_push($thisMember, processOfficeHours(serialize(get_post_meta(get_the_ID(), 'repeat_list', TRUE))));
+
+				array_push($formattedMemberData, $thisMember);
 			}
 		}
 
@@ -189,6 +194,12 @@ if(!class_exists('Oleville_Members_Shortcode'))
 				}
 
 			}
+		}
+
+		public function processOfficeHours($officeHours)
+		{
+			$decoded = json_decode($officeHours); // decode the JSON object that holds all the OH
+			//write_log($decoded);
 		}
 
 		/**
