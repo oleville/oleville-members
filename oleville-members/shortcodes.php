@@ -139,6 +139,12 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			return $result; // finish the page
 		}
 
+		public function check_arduino($member)
+		{
+			//call the RESTful API to check if the member is in
+			
+		}
+
 		//this will return a structure of all the members that are currently in the office, and some of the associated metadata
 		public function is_member_in($member)
 		{
@@ -173,7 +179,16 @@ if(!class_exists('Oleville_Members_Shortcode'))
 		//display the OH page
 		public function show_office_hours()
 		{
-			get_all_members();
+			$members = get_all_members();
+			foreach ($members as $member)
+			{
+				if (is_member_in($member))
+				{
+					//add the member to the result string
+				} else {
+
+				}
+			}
 			//here we should build the page that holds all the OH and displays them to the user
 		}
 
