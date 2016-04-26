@@ -72,43 +72,25 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			return $this->show_front_page();
 		}
 
-		//TODO: decide if this needs to be refactored
 		public function show_members()
 		{
-			global $wpdb; // get a reference to the database
-
 			$result .= '<table class="member-table">';
-
-			$args = array( //args for the query
-				'post-type' => 'member',
-				'posts_per_page' => -1, // unlimited
-				'orderby' => 'menu_order',
-				'order' => 'ASC', //ascending order
-			);
-
-			/// make the query
-			$query = new WP_Query($args);
-
-			// set parameters for the HTML table that will be used to display the members
-			$num_cols = 4; // number of columns
-			$col_count = 0; // counting variable that we use to start a new row whenever we have the specified number of columns
-
-			//loop through the results of the query
-			while ($query -> have_posts())
+			$allMembers = $this->get_all_members();
+			
+			$col_count = 0;			
+			foreach ($allMembers as $member) 
 			{
-				$query -> the_post(); //reference the post from the query
-
-				$postitionID = get_the_ID();
-				$postitionTitle = get_the_title();
-				$thumb = get_the_post_thumbnail($postitionID, "thumbnail");
-				if (!$thumb)  // if there is no thumbnail, set the image to a placeholder
+				// write_log($member['name']);
+				$thumb = get_the_post_thumbnail($member['id'], "thumbnail");
+				
+				if(!$thumb)
 				{
 					$thumb = '<img src="' . get_template_directory_uri() . '/img/placeholder_thumb.png" width="150" height"150">';
 				}
 
 				//build the HTML for this member
-				$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . get_the_title() . '</h3></div>';
-				$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. get_the_ID() . '">Member Profile</button><div class="profile">';
+				$result .= '<td colspan="'.$colspan.'" class="member" style="padding-bottom: 10px;"><center><div class="member_picture">' . $thumb . '</div><div class="member_name"><h3>' . $member['name'] . '</h3></div>';
+				$result .= '<div class="button">'. '<button type="button" class="btn btn-primary member_profile" href="#lightbox-wrapper" data-toggle="modal" data-target="'. $member['id'] . '">Member Profile</button><div class="profile">';
 				$result .= '</center></div></td>';
 
 				if ($col_count >= 3)//check if we need a new row for the next member
@@ -119,7 +101,6 @@ if(!class_exists('Oleville_Members_Shortcode'))
 					$col_count++;//keep going on this row
 				}
 			}
-
 			$result .= '</table>'; // end the table
 
 			//this is the HTML placeholder that is modified by the JS in member-lightbox.js whenever the user clicks on the "Member Profile" button.
@@ -130,7 +111,8 @@ if(!class_exists('Oleville_Members_Shortcode'))
 			}
 			$result .= '<div class="member-content">Placeholder</div></div></div>'; // uses some of the CSS from members (I hope...)
 
-			return $result; // finish the page
+			return $result;
+
 		}
 
 		// returns true if the member is in according to the arduino's data
