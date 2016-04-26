@@ -21,7 +21,17 @@ jQuery(document).ready(function($) {
     // Events when a new datetime is added to/removed from the repeating datetimes
     var i = 1;
     $('#add_repeat_member').click(function() {
-        var datetime ='<div class="datetime"><input type="text" class="time" id="st' + i + '" name="st' + i + '" placeholder="7:00pm" value=""/><span>to</span><input type="text" class="time" id="et' + i + '" name="et' + i + '" placeholder="8:00pm" value=""/><select name="dow' + i + '"><option value="monday" <?php if(get_post_meta($post->ID, "dow' + i + '", TRUE) == "monday") echo "selected"; ?>>Monday</option><option value="tuesday" <?php if(get_post_meta($post->ID, "dow' + i + '", TRUE) == "tuesday") echo "selected"; ?>>Tuesday</option><option value="wednesday" <?php if(get_post_meta($post->ID, "dow' + i + '", TRUE) == "wednesday") echo "selected"; ?>>Wednesday</option><option value="thursday" <?php if(get_post_meta($post->ID, "dow' + i + '", TRUE) == "thursday") echo "selected"; ?>>Thursday</option><option value="friday" <?php if(get_post_meta($post->ID, "dow' + i + '", TRUE) == "friday") echo "selected"; ?>>Friday</option></select><input type="button" class="remove" value="X"></div>';
+        var datetime = '<div class="datetime"><input type="text" class="time" id="st' + i + '" name="st' + i + '" placeholder="7:00pm" value=""/><span>to</span><input type="text" class="time" id="et' + i + '" name="et' + i + '" placeholder="8:00pm" value=""/>';
+        datetime += '<select name="dow' + i + '" id="dow' + i + '">'; 
+        datetime += '<option value="sunday">Sunday</option>';
+        datetime += '<option value="monday">Monday</option>';
+        datetime += '<option value="tuesday">Tuesday</option>';
+        datetime += '<option value="wednesday">Wednesday</option>';
+        datetime += '<option value="thursday">Thursday</option>';
+        datetime += '<option value="friday">Friday</option>';
+        datetime += '<option value="saturday">Saturday</option>';
+
+        datetime += '</select><input type="button" class="remove" value="X"></div>';
 
         $('#max_repeats').val(i);
 
@@ -48,9 +58,9 @@ jQuery(document).ready(function($) {
 
         // Populate the repeated date fields
         repeat_events.forEach(function(val, ind) {
-            $('#st'+ind).val(val[0]);
-            $('#et'+ind).val(val[1]);
-            $('#dow'+ind).val(val[2]);
+            $('#st' + ind).val(val[0]);
+            $('#et' + ind).val(val[1]);
+            $('#dow' + ind).val(val[2]);
             $('#add_repeat_member').trigger('click');
         });
     }

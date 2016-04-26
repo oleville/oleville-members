@@ -22,23 +22,10 @@
 <br />
 <input type="text" id="hometown" name="hometown"  placeholder="Northfield, MN" value="<?php echo get_post_meta($post->ID, 'hometown', TRUE) ?>"/>
 <br />
-<label for="datetime">Got office hours?</label>
-<div id="datetime">
-    <input type="text" class="time" id="start_time" name="start_time" placeholder="7:00pm" value="<?php echo get_post_meta($post->ID, 'start_time', TRUE) ?>"/>
-    <span>to</span>
-    <input type="text" class="time" id="end_time" name="end_time" placeholder="8:00pm" value="<?php echo get_post_meta($post->ID, 'end_time', TRUE) ?>"/>
-    <select name="day_of_week" id="day_of_week">
-	  <option value="monday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'monday') echo 'selected'; ?>>Monday</option>
-	  <option value="tuesday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'tuesday') echo 'selected'; ?>>Tuesday</option>
-	  <option value="wednesday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'wednesday') echo 'selected'; ?>>Wednesday</option>
-	  <option value="thursday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'thursday') echo 'selected'; ?>>Thursday</option>
-	  <option value="friday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'friday') echo 'selected'; ?>>Friday</option>
-	</select>
-</div>
 <div id="repeat_container">
     <div id="repeat_checkbox">
         <input type="checkbox" id="repeat" name="repeat" value="repeat"/>
-        <span>Got more than one time each week? Check if so.</span>
+        <span>Got office hours? Check if so.</span>
     </div>
     <div id="repeat_datetimes">
         <div class="datetime">
@@ -46,11 +33,13 @@
             <span>to</span>
             <input type="text" class="time" id="et0" name="et0" placeholder="8:00pm" value=""/>
             <select name="dow0" id="dow0">
+              <option value='sunday' <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'sunday') echo 'selected'; ?>>Sunday</option>  
               <option value="monday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'monday') echo 'selected'; ?>>Monday</option>
               <option value="tuesday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'tuesday') echo 'selected'; ?>>Tuesday</option>
               <option value="wednesday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'wednesday') echo 'selected'; ?>>Wednesday</option>
               <option value="thursday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'thursday') echo 'selected'; ?>>Thursday</option>
               <option value="friday" <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'friday') echo 'selected'; ?>>Friday</option>
+              <option value='saturday' <?php if(get_post_meta($post->ID, 'day_of_week', TRUE) == 'saturday') echo 'selected'; ?>>Saturday</option>
             </select>
             <input type="button" class="remove" value="X">
         </div>
